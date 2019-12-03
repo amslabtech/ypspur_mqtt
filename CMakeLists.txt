@@ -12,6 +12,10 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/yp-spur/include
 )
 
+find_package(Boost REQUIRED COMPONENTS system thread)
+include_directories(${Boost_INCLUDE_DIRS})
+link_directories(${Boost_LIBRARY_DIRS})
+
 find_package(ypspur QUIET)
 
 if(ypspur_FOUND)
@@ -23,7 +27,11 @@ else()
 endif()
 
 add_executable(ypspur_mqtt src/main.cpp src/ypspur_mqtt.cpp)
-target_link_libraries(ypspur_mqtt mosquitto ypspur)
+target_link_libraries(ypspur_mqtt
+    ypspur
+    mosquitto
+    ${Boost_LIBRARIES}
+)
 
 INSTALL(
     TARGETS ypspur_mqtt
