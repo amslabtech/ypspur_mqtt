@@ -3,6 +3,52 @@
 namespace YPSpurMQTT
 {
 
+Velocity::Velocity(void)
+:v(0), w(0)
+{
+
+}
+
+Velocity::Velocity(double v_, double w_)
+:v(v_), w(w_)
+{
+
+}
+
+Odometry::Odometry(void)
+:t(0), x(0), y(0)
+{
+
+}
+
+std::ostream &operator<<(std::ostream &out, const Odometry &o)
+{
+    out << "(t: " << o.t << ", x: " << o.x << ", y: " << o.y << ", yaw: " << o.yaw << ", v: " << o.vel.v << ", w: " << o.vel.w << ")";
+    return out;
+}
+
+ControlMode::ControlMode(void)
+:mode(MODE::OPEN)
+{
+
+}
+
+ControlMode::ControlMode(int mode_)
+{
+    set_mode(mode_);
+}
+
+void ControlMode::set_mode(int mode_)
+{
+    if(mode_ == MODE::OPEN || mode_ == MODE::TORQUE || mode_ == MODE::VELOCITY){
+        mode = mode_;
+    }else{
+        std::cout << "\033[31mmode " << mode_ << " is invalid !!!\033[0m" << std::endl;
+        std::cout << "\033[31set to OPEN mode\033[0m" << std::endl;
+        mode = MODE::OPEN;
+    }
+}
+
 // static member variable
 bool YPSpurMQTT::shutdown_flag;
 
@@ -134,7 +180,7 @@ void YPSpurMQTT::spin(void)
     while(!shutdown_flag){
         std::cout << "--- ypspur_mqtt ---" << std::endl;
 
-        double x, y, yaw, v, w;
+        double x(0), y(0), yaw(0), v(0), w(0);
         double t = YP::YPSpur_get_pos(YP::CS_BS, &x, &y, &yaw);
         double t_ = YP::YPSpur_get_vel(&v, &w);
         std::cout << "t: " << t << std::endl;
@@ -143,7 +189,30 @@ void YPSpurMQTT::spin(void)
             std::cerr << "\033[31minvalid time: " << t << "\033[0m" << std::endl;
             break;
         }
+        odom.t = t;
+        odom.x = x;
+        odom.y = y;
+        odom.yaw = yaw;
+        odom.vel.v = v;
+        odom.vel.w = w;
+        std::cout << odom << std::endl;
 
+        double force_x(0), torque_z(0);
+        double t__ = YP::YPSpur_get_force(&force_x, &torque_z);
+        if(t__ < 0){
+            std::cerr << "\033[31minvalid time: " << t << "\033[0m" << std::endl;
+            break;
+        }
+        std::cout << "f_x: " << force_x << ", tau_z: " << torque_z << std::endl;
+
+        ///////////
+        set_control_mode(ControlMode::MODE::VELOCITY);
+        set_velocity(Velocity(0, 0));
+        ///////////
+
+        static int count = 0;
+        std::cout << count << std::endl;
+        count++;
         if(YP::YP_get_error_state()){
             break;
         }
@@ -178,6 +247,29 @@ void YPSpurMQTT::set_port(std::string port_name)
 void YPSpurMQTT::set_param_file(const std::string& param_file)
 {
     PARAM_FILE = param_file;
+}
+
+void YPSpurMQTT::set_velocity(const Velocity& vel)
+{
+    if(control_mode.mode == ControlMode::MODE::VELOCITY){
+        YP::YPSpur_vel(vel.v, vel.w);
+    }
+}
+
+void YPSpurMQTT::set_control_mode(int mode_)
+{
+    control_mode.set_mode(mode_);
+    switch(control_mode.mode){
+        case ControlMode::MODE::OPEN:
+            YP::YP_openfree();
+            break;
+        case ControlMode::MODE::TORQUE:
+            YP::YPSpur_free();
+            break;
+        case ControlMode::MODE::VELOCITY:
+            // default
+            break;
+    }
 }
 
 void YPSpurMQTT::sigint_handler(int sig)
