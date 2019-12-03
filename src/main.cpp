@@ -3,7 +3,7 @@
 int main(int argc, char** argv)
 {
     std::cout << "=== ypspur_mqtt started ===" << std::endl;
-    YPSpurMQTT* ypspur_mqtt = new YPSpurMQTT();
+    YPSpurMQTT::YPSpurMQTT* ypspur_mqtt = new YPSpurMQTT::YPSpurMQTT();
 
     int opt;
     while((opt = getopt(argc, argv, "wp:")) != -1){
@@ -19,6 +19,7 @@ int main(int argc, char** argv)
 
     try{
         ypspur_mqtt->initialize();
+        ypspur_mqtt->spin();
     }catch(std::exception& e){
         std::cerr << e.what() << std::endl;
     }

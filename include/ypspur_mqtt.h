@@ -21,6 +21,9 @@ namespace YP
     #include "ypspur.h"
 }
 
+namespace YPSpurMQTT
+{
+
 class YPSpurMQTT
 {
 public:
@@ -28,6 +31,7 @@ public:
     ~YPSpurMQTT(void);
 
     void initialize(void);
+    void spin(void);
     void set_port(std::string);
     void set_simulation_mode(void);
     void set_param_file(const std::string&);
@@ -45,5 +49,7 @@ private:
     pid_t pid;
     bool simulation_flag;
 };
+
+}// namespace YPSpurMQTT
 
 #endif// __YPSPUR_MQTT_H

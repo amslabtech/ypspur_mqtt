@@ -1,5 +1,8 @@
 #include "ypspur_mqtt.h"
 
+namespace YPSpurMQTT
+{
+
 // static member variable
 bool YPSpurMQTT::shutdown_flag;
 
@@ -10,7 +13,7 @@ YPSpurMQTT::YPSpurMQTT(void)
     IPC_KEY = 28741;
     YPSPUR_COORDINATOR = "ypspur-coordinator";
     PARAM_FILE = "";
-    HZ = 50;
+    HZ = 1;
     shutdown_flag = false;
     pid = -1;
     simulation_flag = false;
@@ -125,6 +128,43 @@ void YPSpurMQTT::initialize(void)
     std::cout << "\033[32mypspur_mqtt successfully initialized\033[0m" << std::endl;
 }
 
+void YPSpurMQTT::spin(void)
+{
+    std::cout << "\033[32mypspur_mqtt main loop started\033[0m" << std::endl;
+    while(!shutdown_flag){
+        std::cout << "--- ypspur_mqtt ---" << std::endl;
+
+        double x, y, yaw, v, w;
+        double t = YP::YPSpur_get_pos(YP::CS_BS, &x, &y, &yaw);
+        double t_ = YP::YPSpur_get_vel(&v, &w);
+        std::cout << "t: " << t << std::endl;
+        std::cout << "t_: " << t_ << std::endl;
+        if(t < 0 || t_ < 0){
+            std::cerr << "\033[31minvalid time: " << t << "\033[0m" << std::endl;
+            break;
+        }
+
+        if(YP::YP_get_error_state()){
+            break;
+        }
+        int status;
+        if(waitpid(pid, &status, WNOHANG) == pid){
+            if(WIFEXITED(status)){
+                std::cerr << "\033[31mypspur-coordinator exited\033[0m" << std::endl;;
+            }else{
+                if(WIFSTOPPED(status)){
+                    std::cerr << "\033[31mypspur-coordinator dead with signal " << WSTOPSIG(status) << "\033[0m" << std::endl;;
+                }else{
+                    std::cerr << "\033[31mypspur-coordinator died\033[0m" << std::endl;;
+                }
+            }
+            break;
+        }
+        sleep(1 / HZ);
+    }
+    std::cout << "ypspur_mqtt main loop terminated" << std::endl;
+}
+
 void YPSpurMQTT::set_simulation_mode(void)
 {
     simulation_flag = true;
@@ -144,3 +184,5 @@ void YPSpurMQTT::sigint_handler(int sig)
 {
     shutdown_flag = true;
 }
+
+}// namespace YPSpurMQTT
