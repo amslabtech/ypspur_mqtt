@@ -94,6 +94,10 @@ void YPSpurMQTT::initialize(void)
             args.push_back("-p");
             args.push_back(PARAM_FILE);
         }
+        if(DEVICE != ""){
+            args.push_back("-d");
+            args.push_back(DEVICE);
+        }
         if(simulation_flag){
             std::cout << "\033[31mwithout device mode\033[0m" << std::endl;
             args.push_back("--without-device");
@@ -239,11 +243,6 @@ void YPSpurMQTT::set_simulation_mode(void)
     simulation_flag = true;
 }
 
-void YPSpurMQTT::set_port(std::string port_name)
-{
-    PORT = port_name;
-}
-
 void YPSpurMQTT::set_param_file(const std::string& param_file)
 {
     PARAM_FILE = param_file;
@@ -270,6 +269,11 @@ void YPSpurMQTT::set_control_mode(int mode_)
             // default
             break;
     }
+}
+
+void YPSpurMQTT::set_port(const std::string& port_)
+{
+    PORT = port_;
 }
 
 void YPSpurMQTT::sigint_handler(int sig)

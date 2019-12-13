@@ -73,7 +73,7 @@ public:
 
     void initialize(void);
     void spin(void);
-    void set_port(std::string);
+    void set_port(const std::string&);
     void set_simulation_mode(void);
     void set_param_file(const std::string&);
     void set_velocity(const Velocity&);

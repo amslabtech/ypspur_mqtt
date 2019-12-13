@@ -6,13 +6,16 @@ int main(int argc, char** argv)
     YPSpurMQTT::YPSpurMQTT* ypspur_mqtt = new YPSpurMQTT::YPSpurMQTT();
 
     int opt;
-    while((opt = getopt(argc, argv, "wp:")) != -1){
+    while((opt = getopt(argc, argv, "wp:d:")) != -1){
         switch(opt){
             case 'w':
                 ypspur_mqtt->set_simulation_mode();
                 break;
             case 'p':
                 ypspur_mqtt->set_param_file(optarg);
+                break;
+            case 'd':
+                ypspur_mqtt->set_port(optarg);
                 break;
         }
     }
