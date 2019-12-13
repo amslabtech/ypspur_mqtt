@@ -174,62 +174,70 @@ void YPSpurWrapper::initialize(void)
     std::cout << "\033[32mypspur_wrapper successfully initialized\033[0m" << std::endl;
 }
 
+bool YPSpurWrapper::spin_once(void)
+{
+    std::cout << "--- ypspur_wrapper ---" << std::endl;
+
+    double x(0), y(0), yaw(0), v(0), w(0);
+    double t = YP::YPSpur_get_pos(YP::CS_BS, &x, &y, &yaw);
+    double t_ = YP::YPSpur_get_vel(&v, &w);
+    std::cout << "t: " << t << std::endl;
+    std::cout << "t_: " << t_ << std::endl;
+    if(t < 0 || t_ < 0){
+        std::cerr << "\033[31minvalid time: " << t << "\033[0m" << std::endl;
+        return false;
+    }
+    odom.t = t;
+    odom.x = x;
+    odom.y = y;
+    odom.yaw = yaw;
+    odom.vel.v = v;
+    odom.vel.w = w;
+    std::cout << odom << std::endl;
+
+    double force_x(0), torque_z(0);
+    double t__ = YP::YPSpur_get_force(&force_x, &torque_z);
+    if(t__ < 0){
+        std::cerr << "\033[31minvalid time: " << t << "\033[0m" << std::endl;
+        return false;
+    }
+    std::cout << "f_x: " << force_x << ", tau_z: " << torque_z << std::endl;
+
+    set_control_mode(ControlMode::MODE::VELOCITY);
+    send_velocity(vel);
+
+    if(YP::YP_get_error_state()){
+        return false;
+    }
+    int status;
+    if(waitpid(pid, &status, WNOHANG) == pid){
+        if(WIFEXITED(status)){
+            std::cerr << "\033[31mypspur-coordinator exited\033[0m" << std::endl;;
+        }else{
+            if(WIFSTOPPED(status)){
+                std::cerr << "\033[31mypspur-coordinator dead with signal " << WSTOPSIG(status) << "\033[0m" << std::endl;;
+            }else{
+                std::cerr << "\033[31mypspur-coordinator died\033[0m" << std::endl;;
+            }
+        }
+        return false;
+    }
+    return true;
+}
+
 void YPSpurWrapper::spin(void)
 {
+    // deprecated
     std::cout << "\033[32mypspur_wrapper main loop started\033[0m" << std::endl;
-    while(!shutdown_flag){
-        std::cout << "--- ypspur_wrapper ---" << std::endl;
-
-        double x(0), y(0), yaw(0), v(0), w(0);
-        double t = YP::YPSpur_get_pos(YP::CS_BS, &x, &y, &yaw);
-        double t_ = YP::YPSpur_get_vel(&v, &w);
-        std::cout << "t: " << t << std::endl;
-        std::cout << "t_: " << t_ << std::endl;
-        if(t < 0 || t_ < 0){
-            std::cerr << "\033[31minvalid time: " << t << "\033[0m" << std::endl;
-            break;
-        }
-        odom.t = t;
-        odom.x = x;
-        odom.y = y;
-        odom.yaw = yaw;
-        odom.vel.v = v;
-        odom.vel.w = w;
-        std::cout << odom << std::endl;
-
-        double force_x(0), torque_z(0);
-        double t__ = YP::YPSpur_get_force(&force_x, &torque_z);
-        if(t__ < 0){
-            std::cerr << "\033[31minvalid time: " << t << "\033[0m" << std::endl;
-            break;
-        }
-        std::cout << "f_x: " << force_x << ", tau_z: " << torque_z << std::endl;
-
-        set_control_mode(ControlMode::MODE::VELOCITY);
-        send_velocity(vel);
-
-        static int count = 0;
-        std::cout << count << std::endl;
-        count++;
-        if(YP::YP_get_error_state()){
-            break;
-        }
-        int status;
-        if(waitpid(pid, &status, WNOHANG) == pid){
-            if(WIFEXITED(status)){
-                std::cerr << "\033[31mypspur-coordinator exited\033[0m" << std::endl;;
-            }else{
-                if(WIFSTOPPED(status)){
-                    std::cerr << "\033[31mypspur-coordinator dead with signal " << WSTOPSIG(status) << "\033[0m" << std::endl;;
-                }else{
-                    std::cerr << "\033[31mypspur-coordinator died\033[0m" << std::endl;;
-                }
-            }
-            break;
-        }
+    while(!is_shutdown_requested() && spin_once()){
         sleep(1 / HZ);
     }
     std::cout << "ypspur_wrapper main loop terminated" << std::endl;
+}
+
+bool YPSpurWrapper::is_shutdown_requested(void)
+{
+    return shutdown_flag;
 }
 
 void YPSpurWrapper::set_simulation_mode(void)

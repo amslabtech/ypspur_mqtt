@@ -28,7 +28,10 @@ int main(int argc, char** argv)
 
     try{
         ypspur_wrapper->initialize();
-        ypspur_wrapper->spin();
+        while(!ypspur_wrapper->is_shutdown_requested() && ypspur_wrapper->spin_once()){
+            std::cout << "main loop" << std::endl;
+            usleep(1e6);
+        }
     }catch(std::exception& e){
         std::cerr << e.what() << std::endl;
     }

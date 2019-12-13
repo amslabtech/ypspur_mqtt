@@ -72,7 +72,9 @@ public:
     ~YPSpurWrapper(void);
 
     void initialize(void);
+    bool spin_once(void);
     void spin(void);
+    bool is_shutdown_requested(void);
     void set_port(const std::string&);
     void set_simulation_mode(void);
     void set_param_file(const std::string&);
