@@ -1,8 +1,9 @@
 #include "ypspur_wrapper.h"
+#include "mosquitto.hpp"
 
 int main(int argc, char** argv)
 {
-    std::cout << "=== ypspur_wrapper started ===" << std::endl;
+    std::cout << "=== ypspur_mqtt started ===" << std::endl;
     YPSpurWrapper::YPSpurWrapper* ypspur_wrapper = new YPSpurWrapper::YPSpurWrapper();
 
     int opt;
@@ -19,6 +20,11 @@ int main(int argc, char** argv)
                 break;
         }
     }
+
+    Mosquitto mqtt;
+    const char* ip_addr  = "localhost";
+    const char* cmd_vel_topic    = "cmd_vel";
+    mqtt.connect(ip_addr);
 
     try{
         ypspur_wrapper->initialize();
