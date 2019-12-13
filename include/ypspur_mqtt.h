@@ -76,11 +76,14 @@ public:
     void set_port(const std::string&);
     void set_simulation_mode(void);
     void set_param_file(const std::string&);
-    void set_velocity(const Velocity&);
     void set_control_mode(int);
+    void set_velocity(const Velocity&);
+    Odometry get_odometry(void);
     static void sigint_handler(int);
 
 private:
+    void send_velocity(const Velocity&);
+
     std::string PORT;
     int IPC_KEY;
     std::string YPSPUR_COORDINATOR;
@@ -90,6 +93,7 @@ private:
     static bool shutdown_flag;
 
     Odometry odom;
+    Velocity vel;
     ControlMode control_mode;
     std::map<std::string, double> params_;
     pid_t pid;

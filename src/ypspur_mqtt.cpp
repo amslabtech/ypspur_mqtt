@@ -205,10 +205,8 @@ void YPSpurMQTT::spin(void)
         }
         std::cout << "f_x: " << force_x << ", tau_z: " << torque_z << std::endl;
 
-        ///////////
         set_control_mode(ControlMode::MODE::VELOCITY);
-        set_velocity(Velocity(0, 0));
-        ///////////
+        send_velocity(vel);
 
         static int count = 0;
         std::cout << count << std::endl;
@@ -244,11 +242,16 @@ void YPSpurMQTT::set_param_file(const std::string& param_file)
     PARAM_FILE = param_file;
 }
 
-void YPSpurMQTT::set_velocity(const Velocity& vel)
+void YPSpurMQTT::send_velocity(const Velocity& vel_)
 {
     if(control_mode.mode == ControlMode::MODE::VELOCITY){
-        YP::YPSpur_vel(vel.v, vel.w);
+        YP::YPSpur_vel(vel_.v, vel_.w);
     }
+}
+
+void YPSpurMQTT::set_velocity(const Velocity& vel_)
+{
+    vel = vel_;
 }
 
 void YPSpurMQTT::set_control_mode(int mode_)
@@ -270,6 +273,11 @@ void YPSpurMQTT::set_control_mode(int mode_)
 void YPSpurMQTT::set_port(const std::string& port_)
 {
     PORT = port_;
+}
+
+Odometry YPSpurMQTT::get_odometry(void)
+{
+    return odom;
 }
 
 void YPSpurMQTT::sigint_handler(int sig)
