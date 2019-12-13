@@ -94,10 +94,6 @@ void YPSpurMQTT::initialize(void)
             args.push_back("-p");
             args.push_back(PARAM_FILE);
         }
-        if(DEVICE != ""){
-            args.push_back("-d");
-            args.push_back(DEVICE);
-        }
         if(simulation_flag){
             std::cout << "\033[31mwithout device mode\033[0m" << std::endl;
             args.push_back("--without-device");
