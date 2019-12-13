@@ -1,5 +1,5 @@
-#ifndef __YPSPUR_MQTT_H
-#define __YPSPUR_MQTT_H
+#ifndef __YPSPUR_WRAPPER_H
+#define __YPSPUR_WRAPPER_H
 
 #include <iostream>
 #include <vector>
@@ -21,7 +21,7 @@ namespace YP
     #include "ypspur.h"
 }
 
-namespace YPSpurMQTT
+namespace YPSpurWrapper
 {
 
 class Velocity
@@ -65,11 +65,11 @@ public:
 
 std::ostream &operator<<(std::ostream &out, const Odometry &o);
 
-class YPSpurMQTT
+class YPSpurWrapper
 {
 public:
-    YPSpurMQTT(void);
-    ~YPSpurMQTT(void);
+    YPSpurWrapper(void);
+    ~YPSpurWrapper(void);
 
     void initialize(void);
     void spin(void);
@@ -100,6 +100,6 @@ private:
     bool simulation_flag;
 };
 
-}// namespace YPSpurMQTT
+}// namespace YPSpurWrapper
 
-#endif// __YPSPUR_MQTT_H
+#endif// __YPSPUR_WRAPPER_H

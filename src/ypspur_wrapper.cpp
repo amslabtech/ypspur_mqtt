@@ -1,6 +1,6 @@
-#include "ypspur_mqtt.h"
+#include "ypspur_wrapper.h"
 
-namespace YPSpurMQTT
+namespace YPSpurWrapper
 {
 
 Velocity::Velocity(void)
@@ -50,9 +50,9 @@ void ControlMode::set_mode(int mode_)
 }
 
 // static member variable
-bool YPSpurMQTT::shutdown_flag;
+bool YPSpurWrapper::shutdown_flag;
 
-YPSpurMQTT::YPSpurMQTT(void)
+YPSpurWrapper::YPSpurWrapper(void)
 {
     std::cout << "\033[032m--- CONSTRUCT ---\033[0m" << std::endl;
     PORT = "/dev/ttyACM0";
@@ -65,7 +65,7 @@ YPSpurMQTT::YPSpurMQTT(void)
     simulation_flag = false;
 }
 
-YPSpurMQTT::~YPSpurMQTT(void)
+YPSpurWrapper::~YPSpurWrapper(void)
 {
     std::cout << "\033[033m--- DESTRUCT ---\033[0m" << std::endl;
     if(pid > 0){
@@ -76,7 +76,7 @@ YPSpurMQTT::~YPSpurMQTT(void)
     }
 }
 
-void YPSpurMQTT::initialize(void)
+void YPSpurWrapper::initialize(void)
 {
     pid = 0;
     do{
@@ -158,7 +158,7 @@ void YPSpurMQTT::initialize(void)
     }
     std::cout << pid << ": ypspur-coordinator launched" << std::endl;
 
-    signal(SIGINT, YPSpurMQTT::sigint_handler);
+    signal(SIGINT, YPSpurWrapper::sigint_handler);
 
     // parameter setting
     YP::YP_get_parameter(YP::YP_PARAM_MAX_VEL, &params_["vel"]);
@@ -171,14 +171,14 @@ void YPSpurMQTT::initialize(void)
     YP::YPSpur_set_angvel(params_["angvel"]);
     YP::YPSpur_set_angaccel(params_["angacc"]);
 
-    std::cout << "\033[32mypspur_mqtt successfully initialized\033[0m" << std::endl;
+    std::cout << "\033[32mypspur_wrapper successfully initialized\033[0m" << std::endl;
 }
 
-void YPSpurMQTT::spin(void)
+void YPSpurWrapper::spin(void)
 {
-    std::cout << "\033[32mypspur_mqtt main loop started\033[0m" << std::endl;
+    std::cout << "\033[32mypspur_wrapper main loop started\033[0m" << std::endl;
     while(!shutdown_flag){
-        std::cout << "--- ypspur_mqtt ---" << std::endl;
+        std::cout << "--- ypspur_wrapper ---" << std::endl;
 
         double x(0), y(0), yaw(0), v(0), w(0);
         double t = YP::YPSpur_get_pos(YP::CS_BS, &x, &y, &yaw);
@@ -229,32 +229,32 @@ void YPSpurMQTT::spin(void)
         }
         sleep(1 / HZ);
     }
-    std::cout << "ypspur_mqtt main loop terminated" << std::endl;
+    std::cout << "ypspur_wrapper main loop terminated" << std::endl;
 }
 
-void YPSpurMQTT::set_simulation_mode(void)
+void YPSpurWrapper::set_simulation_mode(void)
 {
     simulation_flag = true;
 }
 
-void YPSpurMQTT::set_param_file(const std::string& param_file)
+void YPSpurWrapper::set_param_file(const std::string& param_file)
 {
     PARAM_FILE = param_file;
 }
 
-void YPSpurMQTT::send_velocity(const Velocity& vel_)
+void YPSpurWrapper::send_velocity(const Velocity& vel_)
 {
     if(control_mode.mode == ControlMode::MODE::VELOCITY){
         YP::YPSpur_vel(vel_.v, vel_.w);
     }
 }
 
-void YPSpurMQTT::set_velocity(const Velocity& vel_)
+void YPSpurWrapper::set_velocity(const Velocity& vel_)
 {
     vel = vel_;
 }
 
-void YPSpurMQTT::set_control_mode(int mode_)
+void YPSpurWrapper::set_control_mode(int mode_)
 {
     control_mode.set_mode(mode_);
     switch(control_mode.mode){
@@ -270,19 +270,19 @@ void YPSpurMQTT::set_control_mode(int mode_)
     }
 }
 
-void YPSpurMQTT::set_port(const std::string& port_)
+void YPSpurWrapper::set_port(const std::string& port_)
 {
     PORT = port_;
 }
 
-Odometry YPSpurMQTT::get_odometry(void)
+Odometry YPSpurWrapper::get_odometry(void)
 {
     return odom;
 }
 
-void YPSpurMQTT::sigint_handler(int sig)
+void YPSpurWrapper::sigint_handler(int sig)
 {
     shutdown_flag = true;
 }
 
-}// namespace YPSpurMQTT
+}// namespace YPSpurWrapper

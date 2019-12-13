@@ -26,7 +26,7 @@ else()
     add_subdirectory(yp-spur)
 endif()
 
-add_executable(ypspur_mqtt src/main.cpp src/ypspur_mqtt.cpp)
+add_executable(ypspur_mqtt src/main.cpp src/ypspur_wrapper.cpp)
 target_link_libraries(ypspur_mqtt
     ypspur
     mosquitto

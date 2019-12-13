@@ -1,31 +1,31 @@
-#include "ypspur_mqtt.h"
+#include "ypspur_wrapper.h"
 
 int main(int argc, char** argv)
 {
-    std::cout << "=== ypspur_mqtt started ===" << std::endl;
-    YPSpurMQTT::YPSpurMQTT* ypspur_mqtt = new YPSpurMQTT::YPSpurMQTT();
+    std::cout << "=== ypspur_wrapper started ===" << std::endl;
+    YPSpurWrapper::YPSpurWrapper* ypspur_wrapper = new YPSpurWrapper::YPSpurWrapper();
 
     int opt;
     while((opt = getopt(argc, argv, "wp:d:")) != -1){
         switch(opt){
             case 'w':
-                ypspur_mqtt->set_simulation_mode();
+                ypspur_wrapper->set_simulation_mode();
                 break;
             case 'p':
-                ypspur_mqtt->set_param_file(optarg);
+                ypspur_wrapper->set_param_file(optarg);
                 break;
             case 'd':
-                ypspur_mqtt->set_port(optarg);
+                ypspur_wrapper->set_port(optarg);
                 break;
         }
     }
 
     try{
-        ypspur_mqtt->initialize();
-        ypspur_mqtt->spin();
+        ypspur_wrapper->initialize();
+        ypspur_wrapper->spin();
     }catch(std::exception& e){
         std::cerr << e.what() << std::endl;
     }
-    delete ypspur_mqtt;
+    delete ypspur_wrapper;
     return 0;
 }
