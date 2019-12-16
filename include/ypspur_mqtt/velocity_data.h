@@ -11,10 +11,11 @@ struct VelocityData{
 
     void print_data(void)
     {
-        std::cout << "id: " << id
-          << ", " << "v: " << v
-          << ", " << "w: " << w
-          << std::endl;
+        std::cout
+            << "id: " << id
+            << ", " << "v: " << v
+            << ", " << "w: " << w
+            << std::endl;
     }
 };
 

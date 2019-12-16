@@ -16,14 +16,14 @@ struct OdometryData{
     void print_data(void)
     {
         std::cout
-          << "sec: " << std::setw(12) << sec
-          << ", " << "usec: " << std::setw(8) << usec
-          << ", " << "x: " << std::setw(8) << x
-          << ", " << "y: " << std::setw(8) << y
-          << ", " << "yaw: " << std::setw(8) << yaw
-          << ", " << "v: " << std::setw(8) << v
-          << ", " << "w: " << std::setw(8) << w
-          << std::endl;
+            << "sec: " << std::setw(12) << sec
+            << ", " << "usec: " << std::setw(8) << usec
+            << ", " << "x: " << std::setw(8) << x
+            << ", " << "y: " << std::setw(8) << y
+            << ", " << "yaw: " << std::setw(8) << yaw
+            << ", " << "v: " << std::setw(8) << v
+            << ", " << "w: " << std::setw(8) << w
+            << std::endl;
     }
 };
 
