@@ -163,11 +163,16 @@ bool YPSpurWrapper::spin_once(void)
         std::cerr << "\033[31minvalid time: " << t << "\033[0m" << std::endl;
         return false;
     }
+    struct timeval time;
+    gettimeofday(&time, NULL);
+    odom.sec = time.tv_sec;
+    odom.usec = time.tv_usec;
     odom.x = x;
     odom.y = y;
     odom.yaw = yaw;
     odom.v = v;
     odom.w = w;
+    odom.print_data();
 
     double force_x(0), torque_z(0);
     double t__ = YP::YPSpur_get_force(&force_x, &torque_z);

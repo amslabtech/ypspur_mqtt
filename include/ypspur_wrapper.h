@@ -7,11 +7,13 @@
 #include <string>
 #include <cstdlib>
 #include <unistd.h>
+#include <ctime>
 
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <sys/time.h>
 
 #include <boost/thread.hpp>
 #include <boost/atomic.hpp>

@@ -27,8 +27,8 @@ void CommandVelocity::onMessage(std::string _topic, void* _data, int _len)
 {
     gettimeofday(&ts, NULL);
     std::cout << (char*)_data << std::endl;
-    // bcopy(_data, (char*)&cmd_vel, sizeof(cmd_vel));
-    // std::cout << cmd_vel << std::endl;
+    bcopy(_data, (char*)&cmd_vel, sizeof(cmd_vel));
+    cmd_vel.print_data();
 }
 
 int main(int argc, char** argv)
@@ -66,7 +66,7 @@ int main(int argc, char** argv)
         while(!ypspur_wrapper->is_shutdown_requested() && ypspur_wrapper->spin_once()){
             std::cout << "main loop" << std::endl;
             YPSpurWrapper::OdometryData odom = ypspur_wrapper->get_odometry();
-            // odom_publisher.publish(odom_topic, (void*)&odom, sizeof(odom));
+            odom_publisher.publish(odom_topic, (void*)&odom, sizeof(odom));
             usleep(1e6);
         }
     }catch(std::exception& e){
