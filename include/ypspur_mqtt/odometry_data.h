@@ -11,6 +11,17 @@ struct OdometryData{
     float yaw;
     float v;
     float w;
+
+    void print_data(void)
+    {
+        std::cout << "id: " << id
+          << ", " << "x: " << x
+          << ", " << "y: " << y
+          << ", " << "yaw: " << yaw
+          << ", " << "v: " << v
+          << ", " << "w: " << w
+          << std::endl;
+    }
 };
 
 }// namespace YPSpurWrapper
