@@ -36,8 +36,10 @@ int main(int argc, char** argv)
     std::cout << "=== ypspur_mqtt started ===" << std::endl;
     YPSpurWrapper::YPSpurWrapper* ypspur_wrapper = new YPSpurWrapper::YPSpurWrapper();
 
+    double hz = 20;
+
     int opt;
-    while((opt = getopt(argc, argv, "wp:d:")) != -1){
+    while((opt = getopt(argc, argv, "wp:d:s:")) != -1){
         switch(opt){
             case 'w':
                 ypspur_wrapper->set_simulation_mode();
@@ -48,8 +50,19 @@ int main(int argc, char** argv)
             case 'd':
                 ypspur_wrapper->set_port(optarg);
                 break;
+            case 's':
+                std::cout << optarg << std::endl;
+                double hz_ = std::stoi(optarg);
+                std::cout << hz_ << std::endl;
+                if(hz_ > 0.0){
+                    hz = hz_;
+                }else{
+                    return -1;
+                }
+                break;
         }
     }
+    std::cout << "main loop rate: " << hz << "[hz]" << std::endl;
 
     const char* ip_addr = "localhost";
     const char* cmd_vel_topic = "cmd_vel";
@@ -67,7 +80,7 @@ int main(int argc, char** argv)
             std::cout << "main loop" << std::endl;
             YPSpurWrapper::OdometryData odom = ypspur_wrapper->get_odometry();
             odom_publisher.publish(odom_topic, (void*)&odom, sizeof(odom));
-            usleep(1e6);
+            usleep((1 / hz) * 1e6);
         }
     }catch(std::exception& e){
         std::cerr << e.what() << std::endl;
