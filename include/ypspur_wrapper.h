@@ -16,6 +16,9 @@
 #include <boost/thread.hpp>
 #include <boost/atomic.hpp>
 
+#include "ypspur_mqtt/velocity_data.h"
+#include "ypspur_mqtt/odometry_data.h"
+
 namespace YP
 {
     #include "ypspur.h"
@@ -23,28 +26,6 @@ namespace YP
 
 namespace YPSpurWrapper
 {
-
-class Velocity
-{
-public:
-    Velocity(void);
-    Velocity(double, double);
-
-    double v;
-    double w;
-};
-
-class Odometry
-{
-public:
-    Odometry(void);
-
-    double t;
-    double x;
-    double y;
-    double yaw;
-    Velocity vel;
-};
 
 class ControlMode
 {
@@ -63,8 +44,6 @@ public:
     int mode;
 };
 
-std::ostream &operator<<(std::ostream &out, const Odometry &o);
-
 class YPSpurWrapper
 {
 public:
@@ -79,12 +58,12 @@ public:
     void set_simulation_mode(void);
     void set_param_file(const std::string&);
     void set_control_mode(int);
-    void set_velocity(const Velocity&);
-    Odometry get_odometry(void);
+    void set_velocity(const VelocityData&);
+    OdometryData get_odometry(void);
     static void sigint_handler(int);
 
 private:
-    void send_velocity(const Velocity&);
+    void send_velocity(const VelocityData&);
 
     std::string PORT;
     int IPC_KEY;
@@ -94,8 +73,8 @@ private:
 
     static bool shutdown_flag;
 
-    Odometry odom;
-    Velocity vel;
+    OdometryData odom;
+    VelocityData vel;
     ControlMode control_mode;
     std::map<std::string, double> params_;
     pid_t pid;

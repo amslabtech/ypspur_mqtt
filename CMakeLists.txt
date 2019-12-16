@@ -40,6 +40,12 @@ INSTALL(
 )
 
 INSTALL(
+    FILES include/${PROJECT_NAME}/velocity_data.h
+    FILES include/${PROJECT_NAME}/odometry_data.h
+    DESTINATION include/${PROJECT_NAME}
+)
+
+INSTALL(
     EXPORT ${PROJECT_NAME}-export
     FILE ${PROJECT_NAME}-config.cmake
     DESTINATION share/cmake/${PROJECT_NAME}

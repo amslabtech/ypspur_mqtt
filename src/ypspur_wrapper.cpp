@@ -3,30 +3,6 @@
 namespace YPSpurWrapper
 {
 
-Velocity::Velocity(void)
-:v(0), w(0)
-{
-
-}
-
-Velocity::Velocity(double v_, double w_)
-:v(v_), w(w_)
-{
-
-}
-
-Odometry::Odometry(void)
-:t(0), x(0), y(0)
-{
-
-}
-
-std::ostream &operator<<(std::ostream &out, const Odometry &o)
-{
-    out << "(t: " << o.t << ", x: " << o.x << ", y: " << o.y << ", yaw: " << o.yaw << ", v: " << o.vel.v << ", w: " << o.vel.w << ")";
-    return out;
-}
-
 ControlMode::ControlMode(void)
 :mode(MODE::OPEN)
 {
@@ -187,13 +163,11 @@ bool YPSpurWrapper::spin_once(void)
         std::cerr << "\033[31minvalid time: " << t << "\033[0m" << std::endl;
         return false;
     }
-    odom.t = t;
     odom.x = x;
     odom.y = y;
     odom.yaw = yaw;
-    odom.vel.v = v;
-    odom.vel.w = w;
-    std::cout << odom << std::endl;
+    odom.v = v;
+    odom.w = w;
 
     double force_x(0), torque_z(0);
     double t__ = YP::YPSpur_get_force(&force_x, &torque_z);
@@ -250,14 +224,14 @@ void YPSpurWrapper::set_param_file(const std::string& param_file)
     PARAM_FILE = param_file;
 }
 
-void YPSpurWrapper::send_velocity(const Velocity& vel_)
+void YPSpurWrapper::send_velocity(const VelocityData& vel_)
 {
     if(control_mode.mode == ControlMode::MODE::VELOCITY){
         YP::YPSpur_vel(vel_.v, vel_.w);
     }
 }
 
-void YPSpurWrapper::set_velocity(const Velocity& vel_)
+void YPSpurWrapper::set_velocity(const VelocityData& vel_)
 {
     vel = vel_;
 }
@@ -283,7 +257,7 @@ void YPSpurWrapper::set_port(const std::string& port_)
     PORT = port_;
 }
 
-Odometry YPSpurWrapper::get_odometry(void)
+OdometryData YPSpurWrapper::get_odometry(void)
 {
     return odom;
 }

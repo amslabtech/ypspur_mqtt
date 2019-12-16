@@ -14,7 +14,7 @@ class CommandVelocity : public Mosquitto {
   public:
     CommandVelocity(const char* _topic):topic(_topic){}
 
-    YPSpurWrapper::Velocity cmd_vel;
+    YPSpurWrapper::VelocityData cmd_vel;
 };
 
 void CommandVelocity::onConnected()
@@ -65,7 +65,7 @@ int main(int argc, char** argv)
         ypspur_wrapper->initialize();
         while(!ypspur_wrapper->is_shutdown_requested() && ypspur_wrapper->spin_once()){
             std::cout << "main loop" << std::endl;
-            YPSpurWrapper::Odometry odom = ypspur_wrapper->get_odometry();
+            YPSpurWrapper::OdometryData odom = ypspur_wrapper->get_odometry();
             // odom_publisher.publish(odom_topic, (void*)&odom, sizeof(odom));
             usleep(1e6);
         }
