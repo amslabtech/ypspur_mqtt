@@ -3,7 +3,7 @@
 #include "time.h"
 #include "sys/time.h"
 
-class CommandVelocity : public Mosquitto {
+class CommandVelocityMQTT : public Mosquitto {
   protected:
     const char* topic;
     void onConnected();
@@ -12,18 +12,18 @@ class CommandVelocity : public Mosquitto {
     struct timeval ts;
 
   public:
-    CommandVelocity(const char* _topic):topic(_topic){}
+    CommandVelocityMQTT(const char* _topic):topic(_topic){}
 
     YPSpurWrapper::VelocityData cmd_vel;
 };
 
-void CommandVelocity::onConnected()
+void CommandVelocityMQTT::onConnected()
 {
     std::cout << "Connected to MQTT broker." << std::endl;;
     subscribe(topic);
 }
 
-void CommandVelocity::onMessage(std::string _topic, void* _data, int _len)
+void CommandVelocityMQTT::onMessage(std::string _topic, void* _data, int _len)
 {
     gettimeofday(&ts, NULL);
     std::cout << (char*)_data << std::endl;
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
     Mosquitto odom_publisher;
     odom_publisher.connect(ip_addr);
 
-    CommandVelocity cmd_vel_listener(cmd_vel_topic);
+    CommandVelocityMQTT cmd_vel_listener(cmd_vel_topic);
     cmd_vel_listener.connect(ip_addr);
     cmd_vel_listener.loop_start();
     try{
