@@ -41,7 +41,7 @@ INSTALL(
 
 INSTALL(
     FILES include/${PROJECT_NAME}/velocity_data.h
-    FILES include/${PROJECT_NAME}/odometry_data.h
+          include/${PROJECT_NAME}/odometry_data.h
     DESTINATION include/${PROJECT_NAME}
 )
 
