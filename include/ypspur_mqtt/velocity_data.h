@@ -5,16 +5,18 @@
 namespace YPSpurWrapper{
 
 struct VelocityData{
-    int32_t id;
+    int32_t sec;
+    int32_t usec;
     float v;
     float w;
 
     void print_data(void)
     {
         std::cout
-            << "id: " << id
-            << ", " << "v: " << v
-            << ", " << "w: " << w
+            << "sec: " << std::setw(12) << sec
+            << ", " << "usec: " << std::setw(8) << usec
+            << ", " << "v: " << std::setw(8) << v
+            << ", " << "w: " << std::setw(8) << w
             << std::endl;
     }
 };
