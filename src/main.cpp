@@ -26,7 +26,6 @@ void CommandVelocityMQTT::onConnected()
 void CommandVelocityMQTT::onMessage(std::string _topic, void* _data, int _len)
 {
     gettimeofday(&ts, NULL);
-    std::cout << (char*)_data << std::endl;
     bcopy(_data, (char*)&cmd_vel, sizeof(cmd_vel));
     cmd_vel.print_data();
 }
