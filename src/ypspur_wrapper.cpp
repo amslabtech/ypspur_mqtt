@@ -36,6 +36,7 @@ YPSpurWrapper::YPSpurWrapper(void)
     YPSPUR_COORDINATOR = "ypspur-coordinator";
     PARAM_FILE = "";
     HZ = 1;
+    TIME_LIMIT = 1.0;
     shutdown_flag = false;
     pid = -1;
     simulation_flag = false;
@@ -182,8 +183,18 @@ bool YPSpurWrapper::spin_once(void)
     }
     std::cout << "f_x: " << force_x << ", tau_z: " << torque_z << std::endl;
 
-    set_control_mode(ControlMode::MODE::VELOCITY);
-    send_velocity(vel);
+    std::cout << "target vel:" << std::endl;
+    vel.print_data();
+    double cmd_time = vel.sec + vel.usec * 1e-6;
+    double now = odom.sec + odom.usec * 1e-6;
+    double d_time = now - cmd_time;
+    std::cout << "elapsed time since last command received: " << d_time << "[s]" << std::endl;
+    if(d_time < TIME_LIMIT){
+        set_control_mode(ControlMode::MODE::VELOCITY);
+        send_velocity(vel);
+    }else{
+        set_control_mode(ControlMode::MODE::OPEN);
+    }
 
     if(YP::YP_get_error_state()){
         return false;
@@ -246,13 +257,16 @@ void YPSpurWrapper::set_control_mode(int mode_)
     control_mode.set_mode(mode_);
     switch(control_mode.mode){
         case ControlMode::MODE::OPEN:
+            std::cout << "OPEN MODE" << std::endl;
             YP::YP_openfree();
             break;
         case ControlMode::MODE::TORQUE:
+            std::cout << "TORQUE MODE" << std::endl;
             YP::YPSpur_free();
             break;
         case ControlMode::MODE::VELOCITY:
             // default
+            std::cout << "VELOCITY MODE" << std::endl;
             break;
     }
 }

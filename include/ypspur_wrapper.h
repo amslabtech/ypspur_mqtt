@@ -72,6 +72,7 @@ private:
     std::string YPSPUR_COORDINATOR;
     std::string PARAM_FILE;
     double HZ;
+    double TIME_LIMIT;
 
     static bool shutdown_flag;
 
