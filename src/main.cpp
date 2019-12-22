@@ -25,6 +25,7 @@ void CommandVelocityMQTT::onConnected()
 
 void CommandVelocityMQTT::onMessage(std::string _topic, void* _data, int _len)
 {
+    std::cout << "cmd_vel received!" << std::endl;
     gettimeofday(&ts, NULL);
     bcopy(_data, (char*)&cmd_vel, sizeof(cmd_vel));
     cmd_vel.print_data();
@@ -77,6 +78,7 @@ int main(int argc, char** argv)
         ypspur_wrapper->initialize();
         while(!ypspur_wrapper->is_shutdown_requested() && ypspur_wrapper->spin_once()){
             std::cout << "main loop" << std::endl;
+            ypspur_wrapper->set_velocity(cmd_vel_listener.cmd_vel);
             YPSpurWrapper::OdometryData odom = ypspur_wrapper->get_odometry();
             odom_publisher.publish(odom_topic, (void*)&odom, sizeof(odom));
             usleep((1 / hz) * 1e6);
