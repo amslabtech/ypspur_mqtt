@@ -36,7 +36,7 @@ target_link_libraries(ypspur_mqtt
 INSTALL(
     TARGETS ypspur_mqtt
     EXPORT ${PROJECT_NAME}-export
-    RUNTIME DESTINATION bin/${PROJECT_NAME}
+    RUNTIME DESTINATION bin
 )
 
 INSTALL(
