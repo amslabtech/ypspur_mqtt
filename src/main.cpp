@@ -36,7 +36,7 @@ int main(int argc, char** argv)
     std::cout << "=== ypspur_mqtt started ===" << std::endl;
     YPSpurWrapper::YPSpurWrapper* ypspur_wrapper = new YPSpurWrapper::YPSpurWrapper();
 
-    double hz = 20;
+    double hz = 50;
 
     int opt;
     while((opt = getopt(argc, argv, "wp:d:s:")) != -1){
