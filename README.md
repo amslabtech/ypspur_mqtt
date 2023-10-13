@@ -7,6 +7,7 @@ MQTT wrapper for YP-Spur
     - build and install yp-spur
     - clone yp-spur to the root directory of this project
 - libmosquitto-dev
+- [MqttClass](https://github.com/amslabtech/MqttClass)
 
 
 ## Build
