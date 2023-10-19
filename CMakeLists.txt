@@ -26,11 +26,16 @@ else()
     add_subdirectory(yp-spur)
 endif()
 
+find_package(PkgConfig)
+pkg_check_modules(libmosquitto REQUIRED libmosquitto)
+
+include_directories(${libmosquitto_INCLUDE_DIRS})
+
 add_executable(ypspur_mqtt src/main.cpp src/ypspur_wrapper.cpp)
 target_link_libraries(ypspur_mqtt
     ypspur
-    mosquitto
     ${Boost_LIBRARIES}
+    ${libmosquitto_LIBRARIES}
 )
 
 INSTALL(
