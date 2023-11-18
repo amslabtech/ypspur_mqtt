@@ -6,25 +6,15 @@ string(ASCII 27 ESC)
 set(CMAKE_CXX_FLAGS "-O2 -std=c++11 -Wall")
 
 include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_BINARY_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/yp-spur/include
-    ${CMAKE_CURRENT_BINARY_DIR}/yp-spur/include
+    include
 )
 
 find_package(Boost REQUIRED COMPONENTS system thread)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
-find_package(ypspur QUIET)
-
-if(ypspur_FOUND)
-    message("-- ${ESC}[32mypspur has been installed!!!${ESC}[0m")
-else()
-    message("-- ${ESC}[33mypspur has not been installed!!!${ESC}[0m")
-    message("-- ${ESC}[33madd subdirectory${ESC}[0m")
-    add_subdirectory(yp-spur)
-endif()
+find_package(ypspur REQUIRED)
+include_directories(${ypspur_INCLUDE_DIRS})
 
 find_package(mqttclass REQUIRED)
 
