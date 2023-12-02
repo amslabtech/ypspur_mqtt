@@ -1,0 +1,4 @@
+- git:
+    local-name: mqttclass
+    uri: https://github.com/amslabtech/MqttClass.git
+    version: update-build-and-install
